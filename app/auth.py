@@ -1,8 +1,7 @@
 from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
-import crud
-import schemas
-from database import get_db
+from . import crud, schemas
+from .database import get_db
 
 
 def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
