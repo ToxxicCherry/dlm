@@ -1,5 +1,5 @@
 from typing import List, Type
-from .dependencies import admin_required
+from . import dependencies
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from starlette import status
@@ -35,6 +35,22 @@ def login_for_access_token(db: Session = Depends(get_db), form_data: OAuth2Passw
     return {'access_token': access_token, 'token_type': 'bearer'}
 
 
+@app.post('/users/{user_id}/make-admin/', response_model=schemas.User)
+def make_user_admin(
+        user_id: int,
+        db: Session = Depends(get_db),
+        current_user: models.User = Depends(dependencies.superuser_required)
+):
+    db_user = crud.get_user_by_id(db, user_id=user_id)
+    if not db_user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    db_user.is_admin = True
+    db.commit()
+    db.refresh(db_user)
+    return {"message": f"User {db_user.email} is now an admin"}
+
+
 @app.get('/items/', response_model=List[schemas.Item])
 def read_items(
         skip: int = 0,
@@ -51,7 +67,7 @@ def add_item_quantity(
         item_id: int,
         quantity_change: schemas.QuantityChange,
         db: Session = Depends(get_db),
-        current_user: models.User = Depends(admin_required)
+        current_user: models.User = Depends(dependencies.admin_required)
 ):
     try:
         db_item = crud.add_item_quantity(db=db, item_id=item_id, quantity=quantity_change.quantity)
@@ -68,7 +84,7 @@ def subtract_item_quantity(
         item_id: int,
         quantity_change: schemas.QuantityChange,
         db: Session = Depends(get_db),
-        current_user: models.User = Depends(admin_required)
+        current_user: models.User = Depends(dependencies.admin_required)
 ):
     try:
         db_item = crud.subtract_item_quantity(db=db, item_id=item_id, quantity=quantity_change.quantity)
@@ -129,4 +145,4 @@ def delete_item(
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to the Warehouse App!"}
+    return {"message": "Welcome to the DLM Warehouse App!"}

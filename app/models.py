@@ -12,6 +12,7 @@ class User(Base):
     last_name = Column(String, index=True)
     hashed_password = Column(String)
     is_admin = Column(Boolean, default=False)
+    is_superuser = Column(Boolean, default=False)
 
 
 class Item(Base):

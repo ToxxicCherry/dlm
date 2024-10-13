@@ -17,6 +17,10 @@ def get_user_by_username(db: Session, username: str) -> models.User:
     return db.query(models.User).filter(models.User.username == username).first()
 
 
+def get_user_by_id(db: Session, user_id: int) -> models.User:
+    return db.query(models.User).filter(models.User.id == user_id).first()
+
+
 def create_user(db: Session, user: schemas.UserCreate) -> models.User:
     hashed_password = pwd_context.hash(user.password)
 
