@@ -1,6 +1,7 @@
 *.py[cod]
 __pycache__/
 .idea
+app/settings.py
 
 venv/
 .env
