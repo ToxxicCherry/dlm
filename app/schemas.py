@@ -41,3 +41,7 @@ class Item(ItemBase):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+
+class QuantityChange(BaseModel):
+    quantity: int

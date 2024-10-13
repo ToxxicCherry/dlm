@@ -46,6 +46,40 @@ def read_items(
     return crud.get_items(db, skip=skip, limit=limit)
 
 
+@app.post('/items/{item_id}/add/', response_model=schemas.Item)
+def add_item_quantity(
+        item_id: int,
+        quantity_change: schemas.QuantityChange,
+        db: Session = Depends(get_db),
+        current_user: models.User = Depends(auth.get_current_user)
+):
+    try:
+        db_item = crud.add_item_quantity(db=db, item_id=item_id, quantity=quantity_change.quantity)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    if db_item is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return db_item
+
+
+@app.post('/items/{item_id}/subtract/', response_model=schemas.Item)
+def subtract_item_quantity(
+        item_id: int,
+        quantity_change: schemas.QuantityChange,
+        db: Session = Depends(get_db),
+        current_user: models.User = Depends(auth.get_current_user)
+):
+    try:
+        db_item = crud.subtract_item_quantity(db=db, item_id=item_id, quantity=quantity_change.quantity)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    if db_item is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return db_item
+
+
 @app.post('/items/', response_model=schemas.Item)
 def create_item(
         item: schemas.ItemCreate,

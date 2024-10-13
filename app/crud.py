@@ -1,5 +1,6 @@
 from typing import Type
 
+from fastapi import HTTPException
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from . import models, schemas
@@ -62,7 +63,32 @@ def delete_item(db: Session, item_id: int) -> models.Item:
 
 def create_item(db: Session, item: schemas.ItemCreate) -> models.Item:
     db_item = models.Item(**item.dict())
+    if get_item_by_name(db, db_item.name):
+        raise HTTPException(status_code=400, detail="Item already exists")
+
     db.add(db_item)
     db.commit()
     db.refresh(db_item)
     return db_item
+
+
+def add_item_quantity(db: Session, item_id: int, quantity: int) -> models.Item:
+    db_item = get_item_by_id(db, item_id)
+    if db_item:
+        db_item.quantity += quantity
+        db.commit()
+        db.refresh(db_item)
+    return db_item
+
+
+def subtract_item_quantity(db: Session, item_id: int, quantity: int) -> models.Item:
+    db_item = get_item_by_id(db, item_id)
+    if db_item:
+        db_item.quantity -= quantity
+        db.commit()
+        db.refresh(db_item)
+    return db_item
+
+
+def get_item_by_name(db: Session, item_name: str) -> models.Item:
+    return db.query(models.Item).filter(models.Item.name == item_name).first()
