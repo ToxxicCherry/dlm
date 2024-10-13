@@ -14,7 +14,7 @@ class User(Base):
     is_admin = Column(Boolean, default=False)
 
 
-class Items(Base):
+class Item(Base):
     __tablename__ = 'items'
 
     id = Column(Integer, primary_key=True, index=True)
