@@ -1,5 +1,5 @@
 from typing import List, Type
-
+from .dependencies import admin_required
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from starlette import status
@@ -51,7 +51,7 @@ def add_item_quantity(
         item_id: int,
         quantity_change: schemas.QuantityChange,
         db: Session = Depends(get_db),
-        current_user: models.User = Depends(auth.get_current_user)
+        current_user: models.User = Depends(admin_required)
 ):
     try:
         db_item = crud.add_item_quantity(db=db, item_id=item_id, quantity=quantity_change.quantity)
@@ -68,7 +68,7 @@ def subtract_item_quantity(
         item_id: int,
         quantity_change: schemas.QuantityChange,
         db: Session = Depends(get_db),
-        current_user: models.User = Depends(auth.get_current_user)
+        current_user: models.User = Depends(admin_required)
 ):
     try:
         db_item = crud.subtract_item_quantity(db=db, item_id=item_id, quantity=quantity_change.quantity)
