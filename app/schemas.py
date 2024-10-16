@@ -15,6 +15,10 @@ class UserCreate(UserBase):
 
 class User(UserBase):
     id: int
+    username: str
+    email: str
+    first_name: str
+    last_name: str
     is_admin: bool
     is_superuser: bool
 

@@ -1,40 +1,42 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.orm import Session
 from datetime import timedelta
 from app.database import get_db
 from app import schemas, models, dependencies, crud, auth
 from starlette import status
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 router = APIRouter()
 
 
 @router.post('/{user_id}/make-admin/', response_model=schemas.User)
-def make_user_admin(
+async def make_user_admin(
         user_id: int,
-        db: Session = Depends(get_db),
+        db: AsyncSession = Depends(get_db),
         current_user: models.User = Depends(dependencies.superuser_required)
 ):
-    db_user = crud.get_user_by_id(db, user_id=user_id)
+    db_user = await crud.get_user_by_id(db, user_id=user_id)
     if not db_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
     db_user.is_admin = True
-    db.commit()
-    db.refresh(db_user)
-    return {"message": f"User {db_user.email} is now an admin"}
+    await db.commit()
+    await db.refresh(db_user)
+    return db_user
 
 
 @router.post('/register/', response_model=schemas.User)
-def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    return auth.register_user(user=user, db=db)
+async def register_user(user: schemas.UserCreate, db: AsyncSession = Depends(get_db)):
+    return await auth.register_user(user=user, db=db)
 
 
 @router.post('/token/', response_model=schemas.Token)
-def login_for_access_token(db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()):
-    user = auth.authenticate_user(db, form_data.username, form_data.password)
+async def login_for_access_token(db: AsyncSession = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()):
+    print("Attempting to authenticate user...")
+    user = await auth.authenticate_user(db, form_data.username, form_data.password)
     if not user:
+        print("Authentication failed")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",

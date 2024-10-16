@@ -7,6 +7,7 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from . import settings
 from fastapi.security import OAuth2PasswordBearer
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 SECRET_KEY = settings.SECRET_KEY
@@ -33,8 +34,8 @@ def create_access_token(data: dict, expires_delta: timedelta = None) -> str:
     return encoded_jwt
 
 
-def authenticate_user(db: Session, username: str, password: str) -> models.User | bool:
-    user = crud.get_user_by_username(db, username)
+async def authenticate_user(db: AsyncSession, username: str, password: str) -> models.User | bool:
+    user = await crud.get_user_by_username(db, username)
     if not user:
         return False
     if not verify_password(password, user.hashed_password):
@@ -42,14 +43,19 @@ def authenticate_user(db: Session, username: str, password: str) -> models.User 
     return user
 
 
-def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    db_user = crud.get_user_by_email(db, email=user.email)
-    if db_user:
+async def register_user(user: schemas.UserCreate, db: AsyncSession):
+    existing_user = await crud.get_user_by_username(db, username=user.username)
+    if existing_user:
+        raise HTTPException(status_code=400, detail='Username already registered')
+
+    existing_email = await crud.get_user_by_email(db, email=user.email)
+    if existing_email:
         raise HTTPException(status_code=400, detail='Email already registered')
-    return crud.create_user(db=db, user=user)
+
+    return await crud.create_user(db=db, user=user)
 
 
-def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
+async def get_current_user(db: AsyncSession = Depends(get_db), token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail='Could not validate credentials',
@@ -64,7 +70,7 @@ def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_
     except JWTError:
         raise credentials_exception
 
-    user = crud.get_user_by_username(db, username=username)
+    user = await crud.get_user_by_username(db, username=username)
     if user is None:
         raise credentials_exception
     return user
