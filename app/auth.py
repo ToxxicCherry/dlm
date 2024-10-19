@@ -1,5 +1,4 @@
 from fastapi import Depends, HTTPException, status
-from sqlalchemy.orm import Session
 from . import crud, schemas, models
 from .database import get_db
 from datetime import datetime, timedelta, timezone
@@ -8,7 +7,6 @@ from passlib.context import CryptContext
 from . import settings
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
-
 
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = 'HS256'
@@ -74,35 +72,3 @@ async def get_current_user(db: AsyncSession = Depends(get_db), token: str = Depe
     if user is None:
         raise credentials_exception
     return user
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

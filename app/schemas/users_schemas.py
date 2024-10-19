@@ -26,27 +26,6 @@ class User(UserBase):
         orm_mode = True
 
 
-class ItemBase(BaseModel):
-    name: str
-    description: Optional[str] = None
-    quantity: int
-
-
-class ItemCreate(ItemBase):
-    pass
-
-
-class Item(ItemBase):
-    id: int
-
-    class Config:
-        orm_mode = True
-
-
 class Token(BaseModel):
     access_token: str
     token_type: str
-
-
-class QuantityChange(BaseModel):
-    quantity: int
