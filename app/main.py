@@ -1,12 +1,10 @@
 from fastapi import FastAPI
-from . import models
-from .database import engine
+from app import models
+from app.database import engine
 from app.routers import users_router, items_router
-from .settings import SECRET_KEY
+from app.settings import SECRET_KEY
 from starlette.middleware.sessions import SessionMiddleware
 from starlette_admin.contrib.sqla import Admin, ModelView
-import logging
-
 
 
 async def init_db():
@@ -24,6 +22,8 @@ admin = Admin(engine=engine, title='Admin panel')
 admin.add_view(ModelView(models.User))
 admin.add_view(ModelView(models.Item))
 admin.add_view(ModelView(models.Product))
+admin.add_view(ModelView(models.ProductTemplate))
+admin.add_view(ModelView(models.ProductTemplateItem))
 admin.mount_to(app)
 
 
