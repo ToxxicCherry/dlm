@@ -30,13 +30,13 @@ class Product(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
-    code = Column(String, unique=True, index=True)
+    description = Column(String, nullable=True, index=True)
     is_template = Column(Boolean, default=True)
     
-    items = relationship('PrioductItem', back_populates='product')
+    items = relationship('ProductItem', back_populates='product')
     
     
-class ProducItem(Base):
+class ProductItem(Base):
     __tablename__ = 'product_items'
     
     id = Column(Integer, primary_key=True, index=True)

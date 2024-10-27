@@ -18,9 +18,9 @@ class Item(ItemBase):
         orm_mode = True
 
 
-class ItemInProductTemplate(BaseModel):
+class ItemQuantity(BaseModel):
     item_id: int
-    quantity_needed: int
+    required_quantity: int
 
 
 class QuantityChange(BaseModel):

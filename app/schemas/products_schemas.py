@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 from typing import Optional, List
-from app.schemas import ItemBase
 
 
 class ProducItemBase(BaseModel):
@@ -18,3 +17,14 @@ class ProductBase(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class ItemQuantity(BaseModel):
+    item_id: int
+    required_quantity: int
+    
+
+class ProductTemplateCreate(BaseModel):
+    name: str
+    description: Optional[str] = None
+    items: List[ItemQuantity]
