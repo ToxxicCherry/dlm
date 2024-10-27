@@ -33,7 +33,7 @@ class Product(Base):
     description = Column(String, nullable=True, index=True)
     is_template = Column(Boolean, default=True)
     
-    items = relationship('ProductItem', back_populates='product')
+    items = relationship('ProductItem', back_populates='product', cascade='all, delete-orphan')
     
     
 class ProductItem(Base):

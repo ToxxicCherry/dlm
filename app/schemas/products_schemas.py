@@ -28,3 +28,7 @@ class ProductTemplateCreate(BaseModel):
     name: str
     description: Optional[str] = None
     items: List[ItemQuantity]
+    
+    
+class ProductTemplateDelete(BaseModel):
+    product_id: int
