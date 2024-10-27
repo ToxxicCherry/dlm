@@ -31,9 +31,9 @@ class Product(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
     code = Column(String, unique=True, index=True)
-    product_template_id = Column(Integer, ForeignKey('product_templates.id'), nullable=False)
-
-    product_template = relationship('ProductTemplate')
+    is_template = Column(Boolean, default=True)
+    
+    items = relationship('PrioductItem', back_populates='product')
     
     
 class ProducItem(Base):
