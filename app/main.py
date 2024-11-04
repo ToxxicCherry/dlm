@@ -2,10 +2,11 @@ from fastapi import FastAPI
 from app import models
 from app.database import engine
 from app.routers import users_router, items_router, products_router
-from app.settings import SECRET_KEY
 from starlette.middleware.sessions import SessionMiddleware
 from starlette_admin.contrib.sqla import Admin, ModelView
 from contextlib import asynccontextmanager
+import os
+from dotenv import load_dotenv
 
 
 async def init_db():
@@ -19,6 +20,8 @@ async def lifespan(_):
     yield
 
 
+load_dotenv()
+SECRET_KEY = os.getenv('SECRET_KEY')
 app = FastAPI(lifespan=lifespan)
 
 app.include_router(items_router, prefix="/items", tags=["items"])
@@ -36,4 +39,3 @@ admin.mount_to(app)
 @app.get("/")
 async def read_root():
     return {"message": "Welcome to the DLM Warehouse App!"}
-

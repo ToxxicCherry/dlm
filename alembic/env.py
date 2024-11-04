@@ -3,8 +3,11 @@ from app.database import Base  # Убедитесь, что импортируе
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context
-from sqlalchemy.ext.asyncio import create_async_engine
-from app.settings import DB_PASSWORD
+from dotenv import load_dotenv
+from urllib.parse import urlparse
+import os
+
+load_dotenv()
 
 # Указываем метаданные для автогенерации миграций
 target_metadata = Base.metadata
@@ -18,7 +21,8 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 # Настройка URL базы данных
-config.set_main_option('sqlalchemy.url', f'postgresql://dlm-warehouse_owner:{DB_PASSWORD}@ep-wispy-hat-a2870e3m.eu-central-1.aws.neon.tech/dlm-warehouse')
+tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
+config.set_main_option('sqlalchemy.url', f'postgresql://{tmpPostgres.username}:{tmpPostgres.password}@{tmpPostgres.hostname}{tmpPostgres.path}')
 
 
 def run_migrations_offline() -> None:
