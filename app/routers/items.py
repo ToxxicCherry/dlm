@@ -1,5 +1,5 @@
 from typing import List, Type
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from app.database import get_db
 from app import schemas, models, dependencies, crud, auth
 from app.models import Item
@@ -90,7 +90,7 @@ async def read_items(
     return await crud.get_items(db, skip=skip, limit=limit)
 
 
-@router.post('/', response_model=schemas.Item)
+@router.post('/', response_model=schemas.Item, status_code=status.HTTP_201_CREATED)
 async def create_item(
         item: schemas.ItemCreate,
         db: AsyncSession = Depends(get_db),

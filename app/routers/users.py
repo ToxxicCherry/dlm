@@ -29,13 +29,11 @@ async def make_user_admin(
 
 @router.post('/register/', response_model=schemas.User)
 async def register_user(user: schemas.UserCreate, db: AsyncSession = Depends(get_db)):
-    logging.info(f"------------------------------------------{type(db)}---------------------------------------------")
     return await auth.register_user(user=user, db=db)
 
 
 @router.post('/token/', response_model=schemas.Token)
 async def login_for_access_token(db: AsyncSession = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()):
-    logging.info("Attempting to authenticate user...")
     user = await auth.authenticate_user(db, form_data.username, form_data.password)
     if not user:
         print("Authentication failed")

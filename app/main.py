@@ -5,13 +5,15 @@ from app.routers import users_router, items_router, products_router
 from app.settings import SECRET_KEY
 from starlette.middleware.sessions import SessionMiddleware
 from starlette_admin.contrib.sqla import Admin, ModelView
+from contextlib import asynccontextmanager
 
 
 async def init_db():
     async with engine.begin() as conn:
         await conn.run_sync(models.Base.metadata.create_all)
-        
-        
+
+
+@asynccontextmanager
 async def lifespan(_):
     await init_db()
     yield
