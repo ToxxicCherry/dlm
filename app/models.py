@@ -24,6 +24,8 @@ class Item(Base):
     description = Column(String, nullable=True, index=True)
     quantity = Column(Integer)
 
+    product_items = relationship('ProductItem', back_populates='item', cascade='all, delete-orphan')
+
 
 class Product(Base):
     __tablename__ = 'products'
