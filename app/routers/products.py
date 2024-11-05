@@ -12,7 +12,7 @@ router = APIRouter()
 async def create_product_template(
     product_data: ProductTemplateCreate, 
     db: AsyncSession = Depends(get_db),
-    #current_user: models.User = Depends(admin_required)
+    current_user: models.User = Depends(admin_required)
 ):
     
     exist_product_template = await get_existing_product_template_by_name(db, name=product_data.name)
@@ -28,7 +28,7 @@ async def create_product_template(
 async def delete_product_template(
     product_template_id: int,
     db: AsyncSession = Depends(get_db),
-    #current_user: models.User = Depends(admin_required)
+    current_user: models.User = Depends(admin_required)
 ):
     exsit_product_template = await get_existing_product_template_by_id(db, id=product_template_id)
     
