@@ -33,6 +33,7 @@ admin = Admin(engine=engine, title='Admin panel')
 admin.add_view(ModelView(models.User))
 admin.add_view(ModelView(models.Item))
 admin.add_view(ModelView(models.Product))
+admin.add_view(ModelView(models.ProductItem))
 admin.mount_to(app)
 
 
