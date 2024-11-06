@@ -4,16 +4,16 @@ from typing import Optional
 
 class ItemBase(BaseModel):
     name: str
+    quantity: float = 0
     description: Optional[str] = None
 
 
 class ItemCreate(ItemBase):
-    quantity: float = 0
+    pass
 
 
 class Item(ItemBase):
     id: int
-    quantity: float
 
     class Config:
         orm_mode = True
