@@ -21,10 +21,21 @@ class Item(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
+    category_id = Column(Integer, ForeignKey('items_categories.id'))
     description = Column(String, nullable=True, index=True)
     quantity = Column(Float, default=0)
 
     product_items = relationship('ProductItem', back_populates='item', cascade='all, delete-orphan')
+    category = relationship('ItemCategory', back_populates='items')
+
+
+class ItemCategory(Base):
+    __tablename__ = 'items_categories'
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, index=True)
+
+    items = relationship('Items', back_populates='category')
 
 
 class Product(Base):
