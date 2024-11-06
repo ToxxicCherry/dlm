@@ -8,6 +8,9 @@ class ItemCategoryBase(BaseModel):
 class ItemCategory(ItemCategoryBase):
     id: int
 
+    class Config:
+        orm_mode = True
+
 
 class ItemCategoryCreate(ItemCategoryBase):
     pass
