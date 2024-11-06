@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, Integer, String, ForeignKey
+from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, Float
 from sqlalchemy.orm import relationship
 from app.database import Base
 
@@ -22,7 +22,7 @@ class Item(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
     description = Column(String, nullable=True, index=True)
-    quantity = Column(Integer)
+    quantity = Column(Float, default=0)
 
     product_items = relationship('ProductItem', back_populates='item', cascade='all, delete-orphan')
 

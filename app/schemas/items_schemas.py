@@ -8,11 +8,12 @@ class ItemBase(BaseModel):
 
 
 class ItemCreate(ItemBase):
-    pass
+    quantity: float = 0
 
 
 class Item(ItemBase):
     id: int
+    quantity: float
 
     class Config:
         orm_mode = True
