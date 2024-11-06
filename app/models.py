@@ -33,9 +33,9 @@ class ItemCategory(Base):
     __tablename__ = 'items_categories'
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
+    name = Column(String, index=True, unique=True)
 
-    items = relationship('Items', back_populates='category')
+    items = relationship('Item', back_populates='category', cascade='all, delete-orphan')
 
 
 class Product(Base):

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from app import models
 from app.database import engine
-from app.routers import users_router, items_router, products_router
+from app.routers import *
 from starlette.middleware.sessions import SessionMiddleware
 from contextlib import asynccontextmanager
 import os
@@ -26,6 +26,7 @@ app = FastAPI(lifespan=lifespan)
 app.include_router(items_router, prefix="/items", tags=["items"])
 app.include_router(users_router, prefix="/users", tags=["users"])
 app.include_router(products_router, prefix="/products", tags=["products"])
+app.include_router(item_category_router, prefix='/item-cats', tags=['items categories'])
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 
 
