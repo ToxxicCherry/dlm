@@ -2,7 +2,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from .. import models, schemas
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
-from fastapi import HTTPException
+from fastapi import HTTPException, status
+from .item_category_crud import get_category_by_id
 
 
 async def get_items(db: AsyncSession, skip: int = 0, limit: int = 10):
@@ -43,13 +44,22 @@ async def delete_item(db: AsyncSession, item_id: int) -> models.Item:
 
 
 async def create_item(db: AsyncSession, item: schemas.ItemCreate) -> models.Item:
-    db_item = models.Item(**item.dict())
+    category_instance = await get_category_by_id(db, item.category_id)
 
-    result = await db.execute(select(models.Item).filter(models.Item.name == db_item.name))
-    existing_item = result.scalars().first()
+    if not category_instance:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Category not found')
+
+    existing_item = await get_item_by_name(db, item.name)
 
     if existing_item:
-        raise HTTPException(status_code=400, detail="Item already exists")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Item already exists")
+
+    db_item = models.Item(
+        name=item.name,
+        quantity=item.quantity,
+        description=item.description,
+        category=category_instance
+    )
 
     db.add(db_item)
     await db.commit()

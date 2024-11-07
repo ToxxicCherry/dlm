@@ -6,7 +6,7 @@ from .item_category_schemas import ItemCategory
 class ItemBase(BaseModel):
     name: str
     quantity: float = 0
-    category: ItemCategory
+    category_id: int
     description: Optional[str] = None
 
 
