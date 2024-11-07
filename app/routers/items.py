@@ -42,7 +42,7 @@ async def subtract_item_quantity(
     return db_item
 
 
-@router.get('/{item_id}/', response_model=schemas.Item)
+@router.get('/{item_id}/', response_model=schemas.ItemRead)
 async def read_item(
         item_id: int,
         db: AsyncSession = Depends(get_db),
@@ -79,13 +79,13 @@ async def delete_item(
     return db_item
 
 
-@router.get('/', response_model=List[schemas.Item])
+@router.get('/', response_model=List[schemas.ItemRead])
 async def read_items(
         skip: int = 0,
         limit: int = 10,
         db: AsyncSession = Depends(get_db),
         #current_user: models.User = Depends(auth.get_current_user),
-) -> list[Type[Item]]:
+):
 
     return await crud.get_items(db, skip=skip, limit=limit)
 

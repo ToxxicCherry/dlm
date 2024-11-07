@@ -6,12 +6,16 @@ from .item_category_schemas import ItemCategory
 class ItemBase(BaseModel):
     name: str
     quantity: float = 0
-    category_id: int
     description: Optional[str] = None
 
 
 class ItemCreate(ItemBase):
-    pass
+    category_id: int
+
+
+class ItemRead(ItemBase):
+    id: int
+    category: ItemCategory
 
 
 class Item(ItemBase):
