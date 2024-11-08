@@ -31,4 +31,4 @@ class ItemQuantity(BaseModel):
 
 
 class QuantityChange(BaseModel):
-    quantity: int
+    quantity: float
